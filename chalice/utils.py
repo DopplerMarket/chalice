@@ -127,7 +127,7 @@ class OSUtils(object):
 
     def open_zip(self, filename, mode, compression=ZIP_DEFLATED):
         # type: (str, str, int) -> zipfile.ZipFile
-        return zipfile.ZipFile(filename, mode, compression=compression)
+        return zipfile.ZipFile(filename, mode, compression=compression, allowZip64 = True)
 
     def remove_file(self, filename):
         # type: (str) -> None

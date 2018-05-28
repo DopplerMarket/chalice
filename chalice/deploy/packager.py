@@ -104,10 +104,16 @@ class LambdaDeploymentPackager(object):
             # HACK: Clone archive to ensure its has correct permissions   
             with self._osutils.tempdir() as clone_dir:
                 self._osutils.extract_zipfile(package_filename, clone_dir)
-                self._osutils.remove_file(package_filename)
                 
                 os.system('chmod -R 777 {}'.format(clone_dir))
-                shutil.make_archive(package_filename[:-4], 'zip', clone_dir)
+                self._osutils.remove_file(package_filename)
+                with self._osutils.open_zip(package_filename, "w", self._osutils.ZIP_DEFLATED) as zf:
+                    prefix_len = len(clone_dir) + 1
+                    for root, _, files in self._osutils.walk(clone_dir):
+                        for file in files:
+                            full_path = self._osutils.joinpath(root, file)
+                            zip_path = full_path[prefix_len:]
+                            zf.write(full_path, zip_path)
               
         return package_filename
 
